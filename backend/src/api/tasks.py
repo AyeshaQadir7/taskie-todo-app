@@ -7,6 +7,8 @@ from src.database import get_session
 from src.models import Task
 from src.schemas import TaskCreate, TaskUpdate, TaskResponse, ErrorResponse
 from src.services import TaskService
+from src.auth.jwt_deps import verify_path_user_id
+from src.auth.auth_context import AuthenticatedUser
 
 router = APIRouter(prefix="/api", tags=["Tasks"])
 
@@ -27,13 +29,15 @@ def get_task_service(session: Session = Depends(get_session)) -> TaskService:
     responses={
         201: {"description": "Task created successfully"},
         400: {"model": ErrorResponse, "description": "Validation error"},
-        401: {"model": ErrorResponse, "description": "Unauthorized"}
+        401: {"model": ErrorResponse, "description": "Unauthorized"},
+        403: {"model": ErrorResponse, "description": "Forbidden"}
     }
 )
 def create_task(
     user_id: str,
     task_create: TaskCreate,
-    service: TaskService = Depends(get_task_service)
+    service: TaskService = Depends(get_task_service),
+    current_user: AuthenticatedUser = Depends(verify_path_user_id)
 ) -> TaskResponse:
     """
     Create a new task for authenticated user
@@ -85,13 +89,15 @@ def create_task(
     responses={
         200: {"description": "Array of tasks (may be empty)"},
         400: {"model": ErrorResponse, "description": "Invalid status parameter"},
-        401: {"model": ErrorResponse, "description": "Unauthorized"}
+        401: {"model": ErrorResponse, "description": "Unauthorized"},
+        403: {"model": ErrorResponse, "description": "Forbidden"}
     }
 )
 def list_tasks(
     user_id: str,
     status: Optional[str] = Query(None, description="Filter by status (incomplete|complete)"),
-    service: TaskService = Depends(get_task_service)
+    service: TaskService = Depends(get_task_service),
+    current_user: AuthenticatedUser = Depends(verify_path_user_id)
 ) -> List[TaskResponse]:
     """
     List all tasks for authenticated user
@@ -125,13 +131,15 @@ def list_tasks(
         200: {"description": "Task retrieved successfully"},
         400: {"model": ErrorResponse, "description": "Invalid task ID"},
         404: {"model": ErrorResponse, "description": "Task not found or not owned"},
-        401: {"model": ErrorResponse, "description": "Unauthorized"}
+        401: {"model": ErrorResponse, "description": "Unauthorized"},
+        403: {"model": ErrorResponse, "description": "Forbidden"}
     }
 )
 def get_task(
     user_id: str,
     id: int,
-    service: TaskService = Depends(get_task_service)
+    service: TaskService = Depends(get_task_service),
+    current_user: AuthenticatedUser = Depends(verify_path_user_id)
 ) -> TaskResponse:
     """
     Retrieve a single task by ID
@@ -174,14 +182,16 @@ def get_task(
         200: {"description": "Task updated successfully"},
         400: {"model": ErrorResponse, "description": "Validation error"},
         404: {"model": ErrorResponse, "description": "Task not found or not owned"},
-        401: {"model": ErrorResponse, "description": "Unauthorized"}
+        401: {"model": ErrorResponse, "description": "Unauthorized"},
+        403: {"model": ErrorResponse, "description": "Forbidden"}
     }
 )
 def update_task(
     user_id: str,
     id: int,
     task_update: TaskUpdate,
-    service: TaskService = Depends(get_task_service)
+    service: TaskService = Depends(get_task_service),
+    current_user: AuthenticatedUser = Depends(verify_path_user_id)
 ) -> TaskResponse:
     """
     Update a task's title and/or description
@@ -259,13 +269,15 @@ def update_task(
         204: {"description": "Task deleted successfully"},
         400: {"model": ErrorResponse, "description": "Invalid task ID"},
         404: {"model": ErrorResponse, "description": "Task not found or not owned"},
-        401: {"model": ErrorResponse, "description": "Unauthorized"}
+        401: {"model": ErrorResponse, "description": "Unauthorized"},
+        403: {"model": ErrorResponse, "description": "Forbidden"}
     }
 )
 def delete_task(
     user_id: str,
     id: int,
-    service: TaskService = Depends(get_task_service)
+    service: TaskService = Depends(get_task_service),
+    current_user: AuthenticatedUser = Depends(verify_path_user_id)
 ) -> None:
     """
     Delete a task
@@ -310,13 +322,15 @@ def delete_task(
         200: {"description": "Task marked as complete"},
         400: {"model": ErrorResponse, "description": "Invalid task ID"},
         404: {"model": ErrorResponse, "description": "Task not found or not owned"},
-        401: {"model": ErrorResponse, "description": "Unauthorized"}
+        401: {"model": ErrorResponse, "description": "Unauthorized"},
+        403: {"model": ErrorResponse, "description": "Forbidden"}
     }
 )
 def mark_complete(
     user_id: str,
     id: int,
-    service: TaskService = Depends(get_task_service)
+    service: TaskService = Depends(get_task_service),
+    current_user: AuthenticatedUser = Depends(verify_path_user_id)
 ) -> TaskResponse:
     """
     Mark a task as complete
