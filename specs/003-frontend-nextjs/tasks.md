@@ -21,7 +21,7 @@
 
 **Purpose**: Initialize Next.js project, configure dependencies, set up project structure
 
-- [ ] T001 Create Next.js 16+ project with `npx create-next-app@latest frontend --typescript --tailwind`
+- [ ] T001 Initialize Next.js 16+ project with TypeScript, TailwindCSS, ESLint, and App Router using `npx create-next-app@latest frontend --typescript --tailwind --eslint --app`
 - [ ] T002 Initialize TypeScript configuration in `frontend/tsconfig.json` with strict mode enabled
 - [ ] T003 [P] Configure Tailwind CSS in `frontend/tailwind.config.js` with custom theme and breakpoints
 - [ ] T004 [P] Configure Next.js in `frontend/next.config.js` with App Router settings
