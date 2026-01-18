@@ -17,6 +17,7 @@ export interface Task {
   title: string
   description?: string
   completed: boolean
+  priority?: string  // "low", "medium", or "high"
   createdAt: string
   updatedAt: string
 }
@@ -43,12 +44,14 @@ export interface TaskListResponse {
 export interface CreateTaskRequest {
   title: string
   description?: string
+  priority?: string  // "low", "medium", or "high"
 }
 
 export interface UpdateTaskRequest {
   title?: string
   description?: string
   completed?: boolean
+  priority?: string  // "low", "medium", or "high"
 }
 
 export interface SignUpRequest {

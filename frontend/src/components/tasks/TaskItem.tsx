@@ -6,9 +6,10 @@
  */
 
 import React, { useState } from 'react'
-import { Task } from '@/src/lib/api/types'
-import { formatRelativeTime } from '@/src/utils/formatting'
-import { Button } from '@/src/components/common/Button'
+import { Task } from '@/lib/api/types'
+import { formatRelativeTime } from '@/utils/formatting'
+import { Button } from '@/components/common/Button'
+import { PriorityBadge } from '@/components/common/PriorityBadge'
 
 interface TaskItemProps {
   task: Task
@@ -72,15 +73,20 @@ export function TaskItem({
 
       {/* Task Content */}
       <div className="flex-1 min-w-0">
-        <h3
-          className={`text-base font-medium ${
-            task.completed
-              ? 'text-gray-400 line-through'
-              : 'text-gray-900'
-          }`}
-        >
-          {task.title}
-        </h3>
+        <div className="flex items-center gap-2">
+          <h3
+            className={`text-base font-medium ${
+              task.completed
+                ? 'text-gray-400 line-through'
+                : 'text-gray-900'
+            }`}
+          >
+            {task.title}
+          </h3>
+          {task.priority && (
+            <PriorityBadge priority={task.priority} size="sm" showText={false} />
+          )}
+        </div>
         {task.description && (
           <p
             className={`mt-1 text-sm ${

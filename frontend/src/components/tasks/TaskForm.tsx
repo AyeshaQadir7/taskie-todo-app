@@ -6,11 +6,12 @@
  */
 
 import React, { useState, useEffect } from 'react'
-import { Task, CreateTaskRequest } from '@/src/lib/api/types'
-import { Input } from '@/src/components/common/Input'
-import { Button } from '@/src/components/common/Button'
-import { ErrorAlert } from '@/src/components/common/ErrorAlert'
-import { validateTaskForm } from '@/src/lib/validation/tasks'
+import { Task, CreateTaskRequest } from '@/lib/api/types'
+import { Input } from '@/components/common/Input'
+import { Button } from '@/components/common/Button'
+import { ErrorAlert } from '@/components/common/ErrorAlert'
+import { PrioritySelector } from '@/components/common/PrioritySelector'
+import { validateTaskForm } from '@/lib/validation/tasks'
 
 interface TaskFormProps {
   initialTask?: Task
@@ -32,6 +33,7 @@ export function TaskForm({
   const [formData, setFormData] = useState({
     title: initialTask?.title || '',
     description: initialTask?.description || '',
+    priority: initialTask?.priority || 'medium',
   })
 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
@@ -64,6 +66,7 @@ export function TaskForm({
       await onSubmit({
         title: formData.title,
         description: formData.description || undefined,
+        priority: formData.priority || 'medium',
       })
     } catch {
       // Error is handled by parent
@@ -118,6 +121,12 @@ export function TaskForm({
         )}
         <p className="text-xs text-gray-500 mt-1">Maximum 1000 characters</p>
       </div>
+
+      <PrioritySelector
+        value={formData.priority}
+        onChange={(value) => setFormData((prev) => ({ ...prev, priority: value }))}
+        label="Priority"
+      />
 
       <div className="flex gap-3">
         <Button

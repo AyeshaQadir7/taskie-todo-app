@@ -6,8 +6,25 @@
  */
 
 import { useState, useCallback } from 'react'
-import { Task, CreateTaskRequest, UpdateTaskRequest } from '@/src/lib/api/types'
-import { apiClient } from '@/src/lib/api/client'
+import { Task, CreateTaskRequest, UpdateTaskRequest } from '@/lib/api/types'
+import { apiClient } from '@/lib/api/client'
+
+
+/**
+ * Transform task from API (snake_case) to frontend (camelCase)
+ */
+function transformTask(task: any): Task {
+  return {
+    id: String(task.id),
+    userId: task.user_id,
+    title: task.title,
+    description: task.description,
+    completed: task.status === 'complete',
+    priority: task.priority,
+    createdAt: task.created_at,
+    updatedAt: task.updated_at,
+  }
+}
 
 export interface UseTasksResult {
   tasks: Task[]
@@ -35,8 +52,8 @@ export function useTasks(): UseTasksResult {
     setError(null)
 
     try {
-      const data = await apiClient.get<{ tasks: Task[] }>(`/api/${userId}/tasks`)
-      setTasks(data.tasks)
+      const taskData = await apiClient.get<any[]>(`/api/${userId}/tasks`)
+      setTasks(taskData.map(transformTask))
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch tasks'
       setError(message)
@@ -52,7 +69,8 @@ export function useTasks(): UseTasksResult {
       setError(null)
 
       try {
-        const newTask = await apiClient.post<Task>(`/api/${userId}/tasks`, data)
+        const newTaskData = await apiClient.post<any>(`/api/${userId}/tasks`, data)
+        const newTask = transformTask(newTaskData)
 
         // Optimistic update
         setTasks((prev) => [...prev, newTask])
@@ -75,10 +93,11 @@ export function useTasks(): UseTasksResult {
       setError(null)
 
       try {
-        const updatedTask = await apiClient.put<Task>(
+        const updatedTaskData = await apiClient.put<any>(
           `/api/${userId}/tasks/${taskId}`,
           data
         )
+        const updatedTask = transformTask(updatedTaskData)
 
         // Optimistic update
         setTasks((prev) =>
@@ -103,10 +122,11 @@ export function useTasks(): UseTasksResult {
       setError(null)
 
       try {
-        const updatedTask = await apiClient.patch<Task>(
+        const updatedTaskData = await apiClient.patch<any>(
           `/api/${userId}/tasks/${taskId}/complete`,
           {}
         )
+        const updatedTask = transformTask(updatedTaskData)
 
         // Optimistic update
         setTasks((prev) =>
