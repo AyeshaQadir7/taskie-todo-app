@@ -1,8 +1,11 @@
 """Business logic layer - TaskService for CRUD operations"""
+import logging
 from datetime import datetime, timezone
 from typing import List, Optional
 from sqlmodel import Session, select
 from src.models import Task
+
+logger = logging.getLogger(__name__)
 
 
 class TaskService:
@@ -44,6 +47,7 @@ class TaskService:
                 results,
                 key=lambda t: (-priority_order.get(t.priority, 2), -t.created_at.timestamp())
             )
+            logger.info(f"Sorted {len(results)} tasks by priority for user {user_id}")
         else:
             # Default sort: newest first
             results = sorted(results, key=lambda t: -t.created_at.timestamp())
@@ -100,6 +104,7 @@ class TaskService:
         self.session.add(task)
         self.session.commit()
         self.session.refresh(task)
+        logger.info(f"Created task {task.id} for user {user_id} with priority={task.priority}")
         return task
 
     def update_task(
@@ -132,6 +137,7 @@ class TaskService:
         if description is not None:
             task.description = description
         if priority is not None:
+            logger.info(f"Updated task {task_id} priority to {priority} for user {user_id}")
             task.priority = priority
 
         task.updated_at = datetime.now(timezone.utc)

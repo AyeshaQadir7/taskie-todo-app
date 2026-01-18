@@ -70,12 +70,18 @@ def create_task(
         )
 
     # Create task (priority validation already done by schema)
-    task = service.create_task(
-        user_id=user_id,
-        title=task_create.title,
-        description=task_create.description,
-        priority=task_create.priority
-    )
+    try:
+        task = service.create_task(
+            user_id=user_id,
+            title=task_create.title,
+            description=task_create.description,
+            priority=task_create.priority
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": f"Failed to create task: {str(e)}"}
+        )
 
     return TaskResponse.model_validate(task)
 
@@ -98,16 +104,24 @@ def create_task(
 def list_tasks(
     user_id: str,
     status: Optional[str] = Query(None, description="Filter by status (incomplete|complete)"),
-    sort: Optional[str] = Query(None, description="Sort option (priority for priority sorting)"),
+    sort: Optional[str] = Query(None, description="Sort option (priority for priority sorting: high→medium→low)"),
     service: TaskService = Depends(get_task_service),
     current_user: AuthenticatedUser = Depends(verify_path_user_id)
 ) -> List[TaskResponse]:
     """
-    List all tasks for authenticated user
+    List all tasks for authenticated user with optional filtering and sorting
 
-    - **user_id**: Authenticated user ID from JWT context
-    - **status**: Optional filter (incomplete or complete)
-    - **sort**: Optional sort parameter (priority for High→Medium→Low ordering)
+    Query Parameters:
+    - **status**: Optional status filter (incomplete or complete). Returns tasks matching the status.
+    - **sort**: Optional sort parameter:
+      - Omit or use any value except "priority": Sort by created_at DESC (newest first)
+      - Use "priority": Sort by priority (High → Medium → Low), then by created_at DESC
+
+    Examples:
+    - GET /api/{user_id}/tasks → All user tasks sorted by newest first
+    - GET /api/{user_id}/tasks?status=incomplete → Incomplete tasks sorted by newest first
+    - GET /api/{user_id}/tasks?sort=priority → All tasks sorted by priority
+    - GET /api/{user_id}/tasks?status=incomplete&sort=priority → Incomplete tasks sorted by priority
 
     Returns array of tasks owned by the user, filtered by optional status parameter.
     Returns empty array [] if user has no tasks.
@@ -254,13 +268,19 @@ def update_task(
         )
 
     # Update task (priority validation already done by schema)
-    task = service.update_task(
-        task_id=task_id,
-        user_id=user_id,
-        title=task_update.title,
-        description=task_update.description,
-        priority=task_update.priority
-    )
+    try:
+        task = service.update_task(
+            task_id=task_id,
+            user_id=user_id,
+            title=task_update.title,
+            description=task_update.description,
+            priority=task_update.priority
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": f"Failed to update task: {str(e)}"}
+        )
 
     if not task:
         raise HTTPException(
