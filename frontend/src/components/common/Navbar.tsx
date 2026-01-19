@@ -48,13 +48,12 @@ export function Navbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 justify-between items-center">
           {/* Logo */}
-          <Link href="/tasks" className="flex items-center gap-3 ">
+          <Link href="/" className="flex items-center gap-3 ">
             <Image
               src="/assets/logo.png"
               alt="Taskie Logo"
               width={40}
               height={40}
-              quality={100}
               className="w-10 h-10 shadow-md"
               priority
             />
