@@ -1,0 +1,27 @@
+
+> frontend@0.1.0 dev
+> next dev
+
+⚠ Port 3000 is in use by process 24964, using available port 3001 instead.
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of F:\hackathon-ii\phase_03\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * F:\hackathon-ii\phase_03\frontend\package-lock.json
+
+▲ Next.js 16.1.1 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.2.104:3001
+- Environments: .env.local
+- Experiments (use with caution):
+  · optimizePackageImports
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 12.2s
+○ Compiling / ...
+ GET / 200 in 14.0s (compile: 10.9s, proxy.ts: 211ms, render: 2.9s)
+ GET /signin 200 in 833ms (compile: 680ms, proxy.ts: 13ms, render: 141ms)
+ GET /tasks 200 in 2.3s (compile: 1720ms, proxy.ts: 18ms, render: 533ms)
+ GET /profile 200 in 1103ms (compile: 1004ms, proxy.ts: 14ms, render: 86ms)
