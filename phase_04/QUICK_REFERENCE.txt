@@ -1,0 +1,139 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    TASKIE DEPLOYMENT QUICK REFERENCE                      ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+🚀 QUICK START (LOCAL DEVELOPMENT)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. Ensure Docker is running
+  2. Run: ./start-local.sh
+  3. Access: http://localhost:3000 (Frontend)
+  4. API Docs: http://localhost:8000/docs
+
+  View logs:   ./logs.sh backend|frontend|all
+  Stop:        ./stop-local.sh
+  Restart:     ./restart-local.sh
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 IMPORTANT FILES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+LOCAL SCRIPTS:
+  ./start-local.sh          Start all services
+  ./stop-local.sh           Stop all services
+  ./logs.sh                 View container logs
+  ./restart-local.sh        Restart services
+
+HELM CHART:
+  ./todo-chatbot/           Helm chart directory
+  ./todo-chatbot/values.yaml                Default values
+  ./todo-chatbot/values-minikube.yaml       Minikube values
+  ./todo-chatbot/Chart.yaml                 Chart metadata
+  ./todo-chatbot/README.md                  Chart documentation
+  ./todo-chatbot/templates/                 Kubernetes templates
+
+DOCUMENTATION:
+  ./DEPLOYMENT_SUMMARY.md                   Setup summary
+  ./HELM_DEPLOYMENT_GUIDE.md                Helm deployment guide
+  ./QUICK_REFERENCE.txt                     This file
+  ./backend/.env                            Backend configuration
+  ./frontend/                               Frontend app
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 SERVICES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Frontend (Next.js):
+  Port: 3000
+  URL:  http://localhost:3000
+  Container: taskie-frontend
+
+Backend (FastAPI):
+  Port: 8000
+  URL:  http://localhost:8000
+  Docs: http://localhost:8000/docs
+  Container: taskie-backend
+
+Database:
+  Type: Neon PostgreSQL (Cloud)
+  Config: backend/.env (DATABASE_URL)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔒 CONFIGURATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Environment Variables (backend/.env):
+  DATABASE_URL                PostgreSQL connection string
+  BETTER_AUTH_SECRET          JWT signing secret (min 32 chars)
+  CORS_ORIGINS                Allowed frontend URLs
+  SQLALCHEMY_ECHO             Enable SQL logging (true/false)
+
+These are automatically loaded by start-local.sh
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🛠️  TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Docker not running:
+  → Start Docker desktop or run: systemctl start docker
+
+Containers won't start:
+  → Check: ./logs.sh backend
+  → Verify: cat backend/.env
+  → Ensure: docker ps shows both containers running
+
+Port 3000/8000 already in use:
+  → Stop services: ./stop-local.sh
+  → Kill processes: lsof -ti:3000 | xargs kill -9
+
+Database connection error:
+  → Verify DATABASE_URL in backend/.env
+  → Test connection manually
+  → Check Neon console for database status
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 DOCUMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Local Development:    Read start-local.sh (has comments)
+Minikube Setup:       Read HELM_DEPLOYMENT_GUIDE.md
+Helm Chart:           Read todo-chatbot/README.md
+Overview:             Read DEPLOYMENT_SUMMARY.md
+Project:              Read README.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 NEXT STEPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Quick Start (Recommended):
+   $ ./start-local.sh
+   Then visit: http://localhost:3000
+
+2. Minikube Deployment:
+   Read: HELM_DEPLOYMENT_GUIDE.md
+
+3. Production Deployment:
+   Use: todo-chatbot/values.yaml with Helm
+   Read: todo-chatbot/README.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 TIPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Use ./logs.sh to monitor both services in real-time
+• Keep backend/.env secure, don't commit to git
+• Update BETTER_AUTH_SECRET regularly (min 32 chars)
+• For production, use strong DATABASE_URL and JWT secrets
+• Test API endpoints with: http://localhost:8000/docs
+• Frontend makes API calls to: http://localhost:8000
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                          Happy Deploying! 🚀                              ║
+╚════════════════════════════════════════════════════════════════════════════╝

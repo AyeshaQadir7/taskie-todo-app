@@ -1,0 +1,174 @@
+# Taskie Helm Chart Values
+# Default values for Taskie (Todo App)
+
+# Global namespace
+namespace: default
+
+# Backend Service Configuration
+backend:
+  name: backend
+  replicaCount: 1
+
+  image:
+    repository: taskie-backend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+
+  # Service port
+  service:
+    type: ClusterIP
+    port: 8000
+    targetPort: 8000
+
+  # Environment variables
+  env:
+    DEBUG: "false"
+    CORS_ORIGINS: "http://localhost:3000,http://localhost"
+
+  # Secrets (create these in your cluster)
+  secrets:
+    databaseUrl: "DATABASE_URL"
+    betterAuthSecret: "BETTER_AUTH_SECRET"
+
+  # Resource limits for Minikube
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  # Health check probes
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+# Frontend Service Configuration
+frontend:
+  name: frontend
+  replicaCount: 1
+
+  image:
+    repository: taskie-frontend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+
+  # Service port
+  service:
+    type: ClusterIP
+    port: 3000
+    targetPort: 3000
+
+  # Environment variables
+  env:
+    NODE_ENV: "production"
+    NEXT_PUBLIC_API_BASE_URL: "http://backend:8000"
+    NEXT_PUBLIC_BETTER_AUTH_URL: "http://localhost:3000"
+
+  # Secrets
+  secrets:
+    betterAuthSecret: "BETTER_AUTH_SECRET"
+
+  # Resource limits for Minikube
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  # Health check probes
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+# Common configuration
+common:
+  imagePullSecrets: []
+  serviceAccount:
+    create: true
+    automount: true
+    annotations: {}
+    name: ""
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1001
+
+# Ingress configuration (for local development with Minikube)
+ingress:
+  enabled: true
+  className: "nginx"  # Use 'minikube addons enable ingress' first
+  annotations:
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: "taskie.local"
+      paths:
+        - path: "/"
+          pathType: Prefix
+          service: frontend
+          port: 3000
+        - path: "/api"
+          pathType: Prefix
+          service: backend
+          port: 8000
+  tls: []
+    # - secretName: taskie-tls
+    #   hosts:
+    #     - taskie.local
+
+# Autoscaling
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+# Node selector for Minikube
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity
+affinity: {}

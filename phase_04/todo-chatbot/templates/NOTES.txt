@@ -1,0 +1,65 @@
+✅ Taskie has been deployed to Kubernetes!
+
+📊 Deployment Summary
+====================================
+
+Chart:    {{ .Chart.Name }}
+Version:  {{ .Chart.Version }}
+Release:  {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+
+🚀 Services Deployed
+====================================
+
+✓ Backend:  {{ include "taskie.fullname" . }}-backend (Port 8000)
+✓ Frontend: {{ include "taskie.fullname" . }}-frontend (Port 3000)
+
+📝 Quick Start - Port Forwarding
+====================================
+
+Open two terminals and run:
+
+Terminal 1 (Backend):
+  kubectl port-forward -n {{ .Release.Namespace }} svc/{{ include "taskie.fullname" . }}-backend 8000:8000
+
+Terminal 2 (Frontend):
+  kubectl port-forward -n {{ .Release.Namespace }} svc/{{ include "taskie.fullname" . }}-frontend 3000:3000
+
+Then access:
+  🎨 Frontend:  http://localhost:3000
+  ⚙️  Backend:   http://localhost:8000
+  📖 API Docs: http://localhost:8000/docs
+  ❤️  Health:   http://localhost:8000/health
+
+🔐 Secrets Configuration
+====================================
+
+Secrets have been created with default values.
+
+IMPORTANT: For production, update with real credentials:
+
+Backend Secrets (database-url, better-auth-secret):
+  kubectl edit secret {{ include "taskie.fullname" . }}-backend-secrets -n {{ .Release.Namespace }}
+
+Frontend Secrets (better-auth-secret):
+  kubectl edit secret {{ include "taskie.fullname" . }}-frontend-secrets -n {{ .Release.Namespace }}
+
+⚙️  Verify Deployment
+====================================
+
+Check pods:
+  kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/name=taskie
+
+Check services:
+  kubectl get svc -n {{ .Release.Namespace }} -l app.kubernetes.io/name=taskie
+
+View logs:
+  kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/name=taskie,component=backend -f
+  kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/name=taskie,component=frontend -f
+
+📦 Uninstall
+====================================
+
+helm uninstall {{ .Release.Name }} -n {{ .Release.Namespace }}
+
+Happy deploying! 🚀

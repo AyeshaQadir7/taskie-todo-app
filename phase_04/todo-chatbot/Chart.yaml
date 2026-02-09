@@ -1,0 +1,22 @@
+apiVersion: v2
+name: taskie
+description: A Helm chart for deploying Taskie (Todo App) on Kubernetes/Minikube
+keywords:
+  - todo
+  - task-management
+  - fastapi
+  - nextjs
+  - full-stack
+
+type: application
+
+# Chart version
+version: 1.0.0
+
+# Application version
+appVersion: "1.0.0"
+
+# Chart maintainers
+maintainers:
+  - name: Taskie Team
+    email: team@taskie.local
